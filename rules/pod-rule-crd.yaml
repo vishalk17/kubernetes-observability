@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: resource-monitor-pod-rules
+  labels:
+    resource: prom-custom
+spec:
+  groups:
+  - name: pod-monitor-node
+    rules:
+    - alert: container-cpu-utilization-exceeds-warning
+      expr: sum(rate(container_cpu_usage_seconds_total{image!="", container=~"^nc-.*"}[60s])) by (pod, container) * 1000 > 200
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        timestamp: >
+          time: {{ with query "time()" }}{{ . | first | value | humanizeTimestamp }}{{ end }}
+        summary: "Container exceeds 200 milicpu limit (0.2 cpu)"
+        description: |
+          Container exceeds 200 milicpu limit (0.2 cpu)
+      # Triggered when CPU utilization is above 200 milicpu , rule applies to all nc-* containers only
+
+    - alert: pod-memory-utilization-exceeds-warning
+      expr: (sum(container_memory_working_set_bytes{name!="", namespace!="", container=~"^nc-.*"}) BY (instance, pod, container, namespace) ) / 2147483648 * 100 > 70
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        timestamp: >
+          time: {{ with query "time()" }}{{ . | first | value | humanizeTimestamp }}{{ end }}
+        summary: "Container memory exceeds 70 percent of total memory (2Gb)"
+        description: |
+          Container memory exceeds 70 percent.
+      # Triggered when Memory  utilization of container is above 2gb  , rule applies to all nc-* containers only
+      # Memmory usage in percentage
+      # 2147483648   : is 2gb : we have set hardcoded value. None of our container using resource limit at the moment
+      # 209715200 : 200 mib

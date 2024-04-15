@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-loki-0
+  namespace: observability
+  labels:
+    app.kubernetes.io/component: single-binary
+    app.kubernetes.io/instance: loki
+    app.kubernetes.io/name: loki
+  finalizers:
+    - kubernetes.io/pvc-protection
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 70Gi
+  storageClassName: microk8s-hostpath
+  volumeMode: Filesystem
+  volumeName: storage-loki-0-pv
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: storage-loki-0-pv
+  finalizers:
+  - kubernetes.io/pv-protection
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 70Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: storage-loki-0
+    namespace: observability
+  hostPath:
+    #path: /non_critical_media-ceph/observability/loki
+    path: /home/vishal/loki-pv
+    type: DirectoryOrCreate
+ # nodeAffinity:
+  #  required:
+  #    nodeSelectorTerms:
+   #   - matchExpressions:
+    #    - key: kubernetes.io/hostname
+     #     operator: In
+      #    values:
+       #   - vishalk17
+  persistentVolumeReclaimPolicy: Retain #Retains PVs after PVC release, requiring manual admin deletion for persistent valuable data.
+  storageClassName: microk8s-hostpath
+  volumeMode: Filesystem

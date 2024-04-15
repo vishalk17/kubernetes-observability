@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvclaim
+  namespace: observability  # Add namespace here
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  selector:
+    matchLabels:
+      pv-name: grafana-pv
+  storageClassName: microk8s-hostpath
+  volumeMode: Filesystem
+  volumeName: grafana-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+  labels:
+    pv-name: grafana-pv
+  namespace: observability  # Add namespace here
+spec:
+  capacity:
+    storage: 20Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: grafana-pvclaim
+    namespace: observability
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /non_critical_media-ceph/observability/grafana
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: microk8s-hostpath
+  volumeMode: Filesystem

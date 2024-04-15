@@ -1,0 +1,39 @@
+grafana:
+  grafana.ini:
+    angular_support_enabled: true    # angular js support is likely going to Deprecate , legacy flag may work for some broken dashboards.
+    smtp:  # Configuration for Grafana email notifications
+      enabled: true
+      from_name: grafana-k8s-notify
+      host: smtp.gmail.com:465
+      user: example@gmail.com  # Password should be provided in a secret , note: we are passing it in script already
+                              # check observability-install.sh for more info
+
+alertmanager:
+  configmapReload:
+    enabled: true
+  # Configuration for Alertmanager
+  alertmanagerSpec:
+    alertmanagerConfigSelector:
+      matchLabels:
+        alertmanagerConfig: custom
+    alertmanagerConfigNamespaceSelector:
+      matchLabels:
+        alertmanagerconfig: enabled
+  #  alertmanagerConfiguration:
+  #    alertmanagerConfig: custom
+    forceEnableClusterMode: true
+
+kubeControllerManager:
+  serviceMonitor:
+    insecureSkipVerify: true
+
+prometheus:
+  prometheusSpec:
+    scrapeTimeout: 15s          # Default to 30s
+    evaluationInterval: 15s     # Default to 30s
+    ## How long to retain metrics
+    retention: 120d
+    # Rules yaml has to match with this label in order to take those into account
+    ruleSelector:
+      matchLabels:
+        resource: prom-custom
