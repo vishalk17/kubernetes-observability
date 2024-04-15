@@ -1,18 +1,19 @@
 --------- step 1 ------------
-kubectl create ns observability
-kubectl apply -f grafana-alert-provisioning.yaml
+
+- kubectl create ns observability
+- kubectl apply -f grafana-alert-provisioning.yaml
 
 --------- step 2 ------------ installing promtail 
 
-refer promtail/readme.md
+- refer promtail/readme.md
 
 --------- step 3 ------------ installing loki
 
-refer loki/readme.md
+- refer loki/readme.md
 
 --------- step 4 ------------ installing grafana, alertmanager, nodeexporter, prometheus
 
-bash observability-install.sh
+- bash observability-install.sh
 
 --------- step 5 ------------  update alertmanager secrets
 
@@ -20,7 +21,7 @@ bash observability-install.sh
 
 - cat alertmanager.yaml | base64 -w0
 
-Note : copy this encoded secret
+ Note : copy this encoded secret
 
 - kubectl get secrets -n observability
 
@@ -32,14 +33,16 @@ Note : here you to replace this encoded secret
 
 ----------------------------------
 
-kubectl get svc -n observability
+- kubectl get svc -n observability
 
 you will get details about following things
 
+```c++
 grafana ui ( kube-prom-stack-grafana >> 80), 
 alertmanager ui (kube-prom-stack-kube-prome-alertmanager > 9093) , 
 promtail ui , (promtail-service >> 3101)
 prometheus ui >> ( kube-prom-stack-kube-prome-prometheus >> 9090 )
+```
 
 
 
@@ -53,16 +56,16 @@ create rules file in rules/ dir
 
 then apply using 
 
-kubectl apply -f <rule-file-prometheus.yaml>
+- kubectl apply -f <rule-file-prometheus.yaml>
 
 ===========================================
 
 how to create alerting rule and apply them for loki (logs for container ) : ( here we are using alertmanager not the grafana )  ( I have defined rules as per my use case, in ur case it might be different )
 
-cd loki
+- cd loki
 
-edit or update or add new rules >>    loki-rules-configmap.yaml 
+- edit or update or add new rules >>    loki-rules-configmap.yaml 
 
-kubectl apply -f loki-rules-configmap.yaml 
+- kubectl apply -f loki-rules-configmap.yaml 
 
 ======================================
