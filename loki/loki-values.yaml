@@ -97,9 +97,6 @@ monitoring:
   selfMonitoring:
     enabled: false
 
-  dashboards:
-    enabled: true
-
   rules:
     enabled: true
 
