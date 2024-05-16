@@ -9,17 +9,9 @@ extraVolumes:
     hostPath:
       path: /var/log
 
-  - name: node-dev
-    hostPath:
-      path: /dev
-
 extraVolumeMounts:
   - name: node-logs
     mountPath: /var/log/host
-    readOnly: true
-
-  - name: node-dev
-    mountPath: /var/log/dev
     readOnly: true
 
 podSecurityContext:
@@ -59,13 +51,4 @@ config:
           labels:
             log: dmesg
             __path__: /var/log/host/dmesg
-            node_name: '${HOSTNAME}'
-
-      - job_name: node-/dev/kmsg
-        static_configs:
-        - targets:
-          - localhost
-          labels:
-            log: dmesg
-            __path__: /var/log/dev/kmsg
             node_name: '${HOSTNAME}'
