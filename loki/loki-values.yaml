@@ -1,3 +1,4 @@
+deploymentMode: SingleBinary
 loki:
   ring:
     kvstore:
@@ -9,12 +10,23 @@ loki:
     filesystem:
       chunks_directory: /var/loki/chunks
       rules_directory: /var/loki/rules
+      admin_api_directory: /var/loki/admin
 
-#    storage:
-#      type: local
-#      local:
-#        directory: "/var/loki/rulestorage/"
-#    rule_path: "/var/loki/rules-temp"
+  memcached:
+    chunk_cache:
+      enabled: false
+    results_cache:
+      enabled: false
+
+  schemaConfig:
+    configs:
+    - from: 2024-01-01
+      object_store: filesystem # we're storing on filesystem so there's no real persistence here.
+      store: tsdb
+      schema: v13
+      index:
+        prefix: loki_index_
+        period: 24h
 
   auth_enabled: false
 
@@ -44,6 +56,12 @@ loki:
     # Skip validating server certificate. 
       tls_insecure_skip_verify: false
 
+read:
+  replicas: 0
+backend:
+  replicas: 0
+write:
+  replicas: 0
 
 singleBinary:
   replicas: 1
@@ -59,6 +77,9 @@ singleBinary:
 test:
   enabled: false
 
+lokiCanary:
+  enabled: false
+
 # -- Set to true to skip tls verification for kube api calls.
 sidecar:
   skipTlsVerify: false
@@ -70,8 +91,6 @@ sidecar:
     labelValue: custom
 
 monitoring:
-  lokiCanary:
-    enabled: false
 
   selfMonitoring:
     enabled: false
