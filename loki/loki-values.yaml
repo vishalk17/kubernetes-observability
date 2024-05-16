@@ -60,6 +60,12 @@ backend:
 write:
   replicas: 0
 
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
 singleBinary:
   replicas: 1
 
@@ -88,9 +94,14 @@ sidecar:
     labelValue: custom
 
 monitoring:
-
   selfMonitoring:
     enabled: false
+
+  dashboards:
+    enabled: true
+
+  rules:
+    enabled: true
 
   rules:
     namespace: observability
