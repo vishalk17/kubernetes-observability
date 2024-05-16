@@ -36,9 +36,6 @@ loki:
   frontend:
     max_outstanding_per_tenant: 4096
 
-  query_range:
-    split_queries_by_interval: 24h
-
   rulerConfig:
   # Base URL of the Grafana instance.
     external_url: "http://kube-prom-stack-grafana.observability.svc.cluster.local:80"
